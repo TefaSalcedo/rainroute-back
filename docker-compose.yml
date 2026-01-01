@@ -1,0 +1,34 @@
+
+
+services:
+  backend:
+    build: .
+    container_name: rainroute_backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - PROJECT_NAME=RainRoute API
+      - POSTGRES_SERVER=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=rainroute_secret
+      - POSTGRES_DB=rainroute_db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: rainroute_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=rainroute_secret
+      - POSTGRES_DB=rainroute_db
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
